@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class ShoppingListsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'cooklist_api.shopping_lists'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "cooklist_api.shopping_lists"
