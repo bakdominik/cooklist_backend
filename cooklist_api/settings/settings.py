@@ -29,6 +29,8 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework_filters",
     "durationwidget",
 ]
 
@@ -128,3 +130,13 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_FILTER_BACKENDS": (
+        "rest_framework_filters.backends.RestFrameworkFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+    ),
+    "PAGE_SIZE": 100,
+}
