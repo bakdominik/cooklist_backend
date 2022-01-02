@@ -25,22 +25,24 @@ class IngredientsInline(admin.StackedInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(CustomModelAdmin):
-    list_display = ("id", "title", "type", "servings", "public", "created_at")
+    list_display = ("id", "owner", "title", "type", "servings", "public", "created_at")
     readonly_fields = ("id", "created_at")
-    list_filter = ("type", "public", "author")
+    list_filter = ("type", "public", "owner")
     search_fields = (
         "id",
         "title",
-        "author__email",
-        "author__first_name",
-        "author__last_name",
+        "owner__email",
+        "owner__first_name",
+        "owner__last_name",
     )
+    raw_id_fields = ("owner",)
     fieldsets = (
         (
             "General",
             {
                 "fields": (
                     "id",
+                    "owner",
                     "title",
                     "type",
                     "servings",
@@ -66,7 +68,7 @@ class RecipeAdmin(CustomModelAdmin):
 
 @admin.register(ScheduledRecipe)
 class ScheduledRecipeAdmin(CustomModelAdmin):
-    list_display = ("id", "recipe", "date_scheduled", "meal_type")
+    list_display = ("id", "recipe", "date", "meal_type")
     readonly_fields = ("id",)
     list_filter = ("meal_type",)
     search_fields = ("id", "recipe__title")
@@ -75,7 +77,7 @@ class ScheduledRecipeAdmin(CustomModelAdmin):
         (
             "General",
             {
-                "fields": ("id", "recipe", "date_scheduled", "meal_type"),
+                "fields": ("id", "recipe", "date", "meal_type"),
                 "classes": (
                     "suit-tab",
                     "suit-tab-general",
