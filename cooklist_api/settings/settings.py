@@ -32,6 +32,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "rest_framework_filters",
     "durationwidget",
+    "drf_yasg",
 ]
 
 LOCAL_APPS = [
