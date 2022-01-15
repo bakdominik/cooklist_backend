@@ -2,7 +2,13 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.relations import PrimaryKeyRelatedField
 
-from cooklist_api.recipes.models import Recipe, Ingredient, Product, ScheduledRecipe
+from cooklist_api.recipes.models import (
+    Recipe,
+    Ingredient,
+    Product,
+    ScheduledRecipe,
+    FavouriteRecipe,
+)
 from cooklist_api.users.api.serializers import SlimUserSerializer
 
 
@@ -27,6 +33,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
+            "id",
             "owner",
             "title",
             "preparation_time",
@@ -66,6 +73,7 @@ class SlimRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
+            "id",
             "owner",
             "title",
             "preparation_time",
@@ -80,7 +88,7 @@ class ScheduledRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ScheduledRecipe
-        fields = ("meal_type", "recipe", "date")
+        fields = ("id", "meal_type", "recipe", "date")
 
 
 class CreateScheduledRecipeSerializer(serializers.ModelSerializer):
@@ -91,3 +99,20 @@ class CreateScheduledRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduledRecipe
         fields = ("owner", "recipe", "meal_type", "date")
+
+
+class FavouriteRecipeSerializer(serializers.ModelSerializer):
+    recipe = SlimRecipeSerializer()
+
+    class Meta:
+        model = FavouriteRecipe
+        fields = ("id", "recipe")
+
+
+class CreateFavouriteRecipeSerializer(serializers.ModelSerializer):
+    owner = PrimaryKeyRelatedField(queryset=User.objects.all())
+    recipe = PrimaryKeyRelatedField(queryset=Recipe.objects.all())
+
+    class Meta:
+        model = FavouriteRecipe
+        fields = ("recipe", "owner")

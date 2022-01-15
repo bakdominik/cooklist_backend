@@ -12,6 +12,7 @@ from cooklist_api.recipes.tests.factories import (
     IngredientFactory,
     ProductFactory,
     ScheduledRecipeFactory,
+    FavouriteRecipeFactory,
 )
 from cooklist_api.users.tests.factories import UserFactory
 
@@ -242,3 +243,41 @@ class TestScheduledRecipeApi(BaseTestCase):
             self.scheduled_recipe.recipe.owner.first_name,
             data["recipe"]["owner"]["first_name"],
         )
+
+
+class TestFavouriteRecipeApi(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.favourite_recipe = FavouriteRecipeFactory(owner=self.user)
+
+    def test_create(self):
+        payload = {
+            "owner": self.user.id,
+            "recipe": RecipeFactory().id,
+        }
+        response = self._post(
+            reverse("cooklist-api-v1-recipes:FavouriteRecipe-list"), data=payload
+        )
+        self.assertEqual(HTTP_201_CREATED, response.status_code)
+
+    def test_delete(self):
+        response = self._delete(
+            reverse(
+                "cooklist-api-v1-recipes:FavouriteRecipe-detail",
+                args=[self.favourite_recipe.id],
+            ),
+            user=self.user,
+        )
+        self.assertEqual(HTTP_204_NO_CONTENT, response.status_code)
+
+    def test_list(self):
+        response = self._get(
+            reverse(
+                "cooklist-api-v1-recipes:FavouriteRecipe-list",
+            ),
+            user=self.user,
+        )
+        self.assertEqual(HTTP_200_OK, response.status_code)
+        self.assertEqual(1, len(response.json()))
+        data = response.json()[0]
+        self.assertEqual(self.favourite_recipe.recipe.id, data["recipe"]["id"])

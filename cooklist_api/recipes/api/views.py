@@ -3,15 +3,30 @@ from django.db.transaction import atomic
 from rest_framework import mixins, viewsets, status
 from rest_framework.response import Response
 
-from cooklist_api.recipes.api.filters import RecipeFilter, ScheduledRecipeFilter
+from cooklist_api.recipes.api.filters import (
+    RecipeFilter,
+    ScheduledRecipeFilter,
+    FavouriteRecipeFilter,
+)
 from cooklist_api.recipes.api.serializers import (
     RecipeSerializer,
     UpdateCreateRecipeSerializer,
     ScheduledRecipeSerializer,
     CreateScheduledRecipeSerializer,
+    FavouriteRecipeSerializer,
+    CreateFavouriteRecipeSerializer,
 )
-from cooklist_api.recipes.models import Recipe, Ingredient, Product, ScheduledRecipe
-from cooklist_api.recipes.permissions import RecipePermission, ScheduledRecipePermission
+from cooklist_api.recipes.models import (
+    Recipe,
+    Ingredient,
+    Product,
+    ScheduledRecipe,
+    FavouriteRecipe,
+)
+from cooklist_api.recipes.permissions import (
+    RecipePermission,
+    OwnerCanDeleteAuthenticatedUserPermission,
+)
 
 
 class RecipeViewSet(
@@ -98,7 +113,7 @@ class ScheduledRecipeViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
-    permission_classes = (ScheduledRecipePermission,)
+    permission_classes = (OwnerCanDeleteAuthenticatedUserPermission,)
     filter_class = ScheduledRecipeFilter
     serializer_class = ScheduledRecipeSerializer
     pagination_class = None
@@ -113,4 +128,26 @@ class ScheduledRecipeViewSet(
             ScheduledRecipe.objects.select_related("recipe")
             .filter(owner=self.request.user)
             .order_by("-date")
+        )
+
+
+class FavouriteRecipeViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    permission_classes = (OwnerCanDeleteAuthenticatedUserPermission,)
+    filter_class = FavouriteRecipeFilter
+    serializer_class = FavouriteRecipeSerializer
+    pagination_class = None
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return CreateFavouriteRecipeSerializer
+        return self.serializer_class
+
+    def get_queryset(self):
+        return FavouriteRecipe.objects.select_related("recipe").filter(
+            owner=self.request.user
         )

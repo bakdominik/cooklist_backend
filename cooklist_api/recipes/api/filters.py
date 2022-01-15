@@ -40,7 +40,6 @@ class RecipeFilter(FilterSet):
 
 
 class ScheduledRecipeFilter(FilterSet):
-    owner = RelatedFilter(filterset=UserFilter, queryset=User.objects.all())
     recipe = RelatedFilter(filterset=RecipeFilter, queryset=Recipe.objects.all())
 
     class Meta:
@@ -49,3 +48,7 @@ class ScheduledRecipeFilter(FilterSet):
             "date": ["exact", "in", "gt", "gte", "lt", "lte"],
             "meal_type": ["exact", "in"],
         }
+
+
+class FavouriteRecipeFilter(FilterSet):
+    recipe = RelatedFilter(filterset=RecipeFilter, queryset=Recipe.objects.all())

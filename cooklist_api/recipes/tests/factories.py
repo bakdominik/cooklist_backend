@@ -6,7 +6,13 @@ from factory import SubFactory
 from factory.django import DjangoModelFactory
 
 from cooklist_api.recipes.enums import RecipeType, MealType
-from cooklist_api.recipes.models import Recipe, Ingredient, Product, ScheduledRecipe
+from cooklist_api.recipes.models import (
+    Recipe,
+    Ingredient,
+    Product,
+    ScheduledRecipe,
+    FavouriteRecipe,
+)
 
 
 class RecipeFactory(DjangoModelFactory):
@@ -43,3 +49,10 @@ class IngredientFactory(DjangoModelFactory):
 
     class Meta:
         model = Ingredient
+
+
+class FavouriteRecipeFactory(DjangoModelFactory):
+    recipe = SubFactory(RecipeFactory)
+
+    class Meta:
+        model = FavouriteRecipe

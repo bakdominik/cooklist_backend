@@ -83,3 +83,15 @@ class ScheduledRecipe(models.Model):
     )
     date = models.DateField()
     meal_type = EnumIntegerField(MealType)
+
+
+class FavouriteRecipe(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="favourite_recipes",
+        on_delete=models.CASCADE,
+    )
+    recipe = models.ForeignKey(Recipe, related_name="likes", on_delete=models.PROTECT)
+
+    class Meta:
+        unique_together = ["recipe", "owner"]
